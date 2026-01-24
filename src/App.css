@@ -416,9 +416,6 @@ button {
     font-size: 15px;
 }
 
-/* ==================== */
-/* Competencies Section */
-/* ==================== */
 .competencies {
     padding: 80px 0;
     background: #fff;
@@ -476,9 +473,6 @@ button {
     line-height: 1.7;
 }
 
-/* ==================== */
-/* Portfolio Section */
-/* ==================== */
 .portfolio {
     padding: 80px 0;
     background: #fff;
@@ -560,9 +554,6 @@ button {
     font-weight: 500;
 }
 
-/* ==================== */
-/* Support Section */
-/* ==================== */
 .support {
     padding: 80px 0;
     background: #fff;
@@ -620,9 +611,6 @@ button {
     line-height: 1.7;
 }
 
-/* ==================== */
-/* Awards Section */
-/* ==================== */
 .awards {
     padding: 80px 0;
     background: #f8f9fa;
@@ -664,9 +652,6 @@ button {
     line-height: 1.6;
 }
 
-/* ==================== */
-/* Team Section */
-/* ==================== */
 .team {
     padding: 80px 0;
     background: #fff;
@@ -722,9 +707,6 @@ button {
     letter-spacing: 0.5px;
 }
 
-/* ==================== */
-/* Contact Form Section */
-/* ==================== */
 .contact-form {
     padding: 80px 0;
     background: #2d2d2d;
@@ -909,9 +891,6 @@ button {
     border: 2px solid #f5c6cb;
 }
 
-/* ==================== */
-/* Footer */
-/* ==================== */
 .footer {
     background: #1a1a1a;
     color: #fff;
@@ -981,9 +960,6 @@ button {
     transform: scale(1.1);
 }
 
-/* ==================== */
-/* Tablet Styles */
-/* ==================== */
 @media (min-width: 768px) {
     .section__title {
         font-size: 42px;
@@ -1046,9 +1022,6 @@ button {
     }
 }
 
-/* ==================== */
-/* Desktop Styles */
-/* ==================== */
 @media (min-width: 1024px) {
     .navbar__toggle {
         display: none;
@@ -1170,9 +1143,6 @@ button {
     }
 }
 
-/* ==================== */
-/* Animations */
-/* ==================== */
 @keyframes fadeIn {
     from {
         opacity: 0;
