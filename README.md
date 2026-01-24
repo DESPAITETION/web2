@@ -4,7 +4,7 @@
 
 ## 🚀 Деплой на GitHub Pages
 
-Сайт доступен по адресу: https://youminava.github.io/check_test/
+Сайт доступен по адресу: https://despaitetion.github.io/web/
 
 ## 📦 Установка и запуск
 
