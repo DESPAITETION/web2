@@ -50,9 +50,6 @@ button {
     padding: 0 15px;
 }
 
-/* ==================== */
-/* Typography */
-/* ==================== */
 .section__title {
     font-size: 36px;
     font-weight: 700;
@@ -63,9 +60,6 @@ button {
     letter-spacing: 1px;
 }
 
-/* ==================== */
-/* Buttons */
-/* ==================== */
 .btn {
     display: inline-block;
     padding: 18px 50px;
@@ -178,9 +172,6 @@ button {
     to { transform: translateY(-50%) rotate(360deg); }
 }
 
-/* ==================== */
-/* Header */
-/* ==================== */
 .header {
     position: relative;
     height: 100vh;
@@ -212,9 +203,6 @@ button {
     z-index: 2;
 }
 
-/* ==================== */
-/* Navbar */
-/* ==================== */
 .navbar {
     padding: 25px 0;
     position: relative;
@@ -363,9 +351,6 @@ button {
     padding-left: 30px;
 }
 
-/* ==================== */
-/* Hero */
-/* ==================== */
 .hero {
     flex: 1;
     display: flex;
@@ -397,9 +382,6 @@ button {
     letter-spacing: 1px;
 }
 
-/* ==================== */
-/* About Section */
-/* ==================== */
 .about {
     padding: 80px 0;
     background: #f8f9fa;
