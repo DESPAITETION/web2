@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // ДОБАВЛЕН useEffect
 
 const Contact = () => {
-  // Единое состояние для управления полями формы холдинга
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,11 +9,35 @@ const Contact = () => {
     message: ''
   });
 
-  // Состояния для уведомлений пользователя
   const [statusMessage, setStatusMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Универсальный обработчик ввода данных
+  // =========================================================================
+  // НОВОЕ: АВТОЗАПОЛНЕНИЕ ФОРМЫ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+  // =========================================================================
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+
+    if (userId) {
+      fetch(`contact.php?id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success' && data.user) {
+            setFormData({
+              name: data.user.name || '',
+              email: data.user.email || '',
+              phone: data.user.phone || '',
+              company: data.user.company || '',
+              message: data.user.message || ''
+            });
+          }
+        })
+        .catch(error => console.error("Ошибка автозаполнения:", error));
+    }
+  }, []); // Пустой массив означает, что это сработает 1 раз при открытии ссылки
+  // =========================================================================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -23,7 +46,6 @@ const Contact = () => {
     }));
   };
 
-  // Обработчик отправки формы на сервер
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatusMessage('Отправка данных...');
@@ -31,7 +53,7 @@ const Contact = () => {
 
     // --- 1. СТРОГАЯ ФРОНТЕНД-ВАЛИДАЦИЯ ---
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?[0-9]{10,15}$/; // Только цифры, от 10 до 15 знаков, опциональный +
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
 
     if (!emailRegex.test(formData.email.trim())) {
       setIsSuccess(false);
@@ -45,19 +67,16 @@ const Contact = () => {
       return;
     }
 
-    // --- 2. ОПРЕДЕЛЕНИЕ СТАТУСА АВТОРblockИЗАЦИИ ---
-    // Считываем параметр id из URL строки браузера (?id=...)
+    // --- 2. ОПРЕДЕЛЕНИЕ СТАТУСА АВТОРИЗАЦИИ ---
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('id');
 
-    // Формируем payload для отправки на бэкенд, добавляя туда id пользователя
     const payload = {
       ...formData,
       id: userId ? parseInt(userId, 10) : null
     };
 
     try {
-      // Отправляем относительный запрос на contact.php
       const response = await fetch('contact.php', {
         method: 'POST',
         headers: {
@@ -76,10 +95,10 @@ const Contact = () => {
         setIsSuccess(true);
         
         if (userId) {
-          // Режим авторизованного пользователя: выводим сообщение об успешном UPDATE
+          // Режим авторизованного пользователя
           setStatusMessage(result.message);
         } else {
-          // Режим неавторизованного пользователя: выводим сгенерированные данные по ТЗ
+          // Режим неавторизованного пользователя
           setStatusMessage(
             `🎉 Вы успешно зарегистрированы!\n\n` +
             `👤 Ваш логин: ${result.login}\n` +
@@ -87,7 +106,6 @@ const Contact = () => {
             `🔗 Ссылка на ваш профиль:\n${result.profile_url}`
           );
 
-          // Очищаем форму только при первичной регистрации нового аккаунта
           setFormData({
             name: '',
             email: '',
@@ -193,7 +211,7 @@ const Contact = () => {
           color: isSuccess ? '#385723' : '#c65911',
           border: `1px solid ${isSuccess ? '#a9d08e' : '#f4b084'}`,
           fontWeight: 'bold',
-          whiteSpace: 'pre-wrap' // Важно для красивого переноса строк (\n) логина и пароля
+          whiteSpace: 'pre-wrap'
         }}>
           {statusMessage}
         </div>

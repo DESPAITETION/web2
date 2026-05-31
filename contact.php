@@ -23,7 +23,29 @@ try {
     exit;
 }
 
-// Читаем JSON-данные, которые прислал React-компонент
+// =========================================================================
+// НОВОЕ: ЧТЕНИЕ ДАННЫХ ДЛЯ АВТОЗАПОЛНЕНИЯ ФОРМЫ (GET ЗАПРОС)
+// =========================================================================
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+    $fetchId = (int)$_GET['id'];
+    try {
+        $stmt = $pdo->prepare("SELECT name, email, phone, company, message FROM users WHERE id = ?");
+        $stmt->execute([$fetchId]);
+        $user = $stmt->fetch();
+        
+        if ($user) {
+            echo json_encode(['status' => 'success', 'user' => $user]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Пользователь не найден']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => 'Ошибка чтения из БД: ' . $e->getMessage()]);
+    }
+    exit; // Останавливаем скрипт, чтобы не выполнялся код записи ниже
+}
+// =========================================================================
+
+// Читаем JSON-данные, которые прислал React-компонент (POST ЗАПРОС)
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (!$input) {
@@ -58,7 +80,7 @@ if (!empty($phone) && !preg_match('/^\+?[0-9]{10,15}$/', $phone)) {
 
 // --- ОБРАБОТКА ЗАПРОСА ---
 if ($userId) {
-    // Режим АВТОРblockИЗОВАННОГО пользователя (Обновление профиля)
+    // Режим АВТОРИЗОВАННОГО пользователя (Обновление профиля)
     try {
         $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, company = ?, message = ? WHERE id = ?");
         $stmt->execute([$name, $email, $phone, $company, $message, $userId]);
@@ -71,7 +93,7 @@ if ($userId) {
         echo json_encode(['status' => 'error', 'message' => 'Ошибка обновления базы: ' . $e->getMessage()]);
     }
 } else {
-    // Режим НЕАВТОРblockИЗОВАННОГО пользователя (Регистрация нового аккаунта по ТЗ)
+    // Режим НЕАВТОРИЗОВАННОГО пользователя (Регистрация нового аккаунта по ТЗ)
     $login = 'user_' . time() . '_' . rand(10, 99); // Уникальный логин
     $plainPassword = bin2hex(random_bytes(4));     // Случайный читаемый пароль (8 символов)
     $passwordHash = password_hash($plainPassword, PASSWORD_BCRYPT); // Хэш для БД
@@ -83,7 +105,7 @@ if ($userId) {
         $newId = $pdo->lastInsertId();
         $profileUrl = "http://u82369.kubsu-dev.ru/lab4/index.html?id=" . $newId;
 
-        // Возвращаем именно те ключи, которые ждет твой React (`result.login`, `result.password` и т.д.)
+        // Возвращаем именно те ключи, которые ждет твой React
         echo json_encode([
             'status' => 'success',
             'login' => $login,
