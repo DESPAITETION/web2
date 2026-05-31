@@ -5,9 +5,89 @@
     <link rel="icon" type="image/svg+xml" href="project/project/img/drupal-coder.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drupal-coder - Разработка на Drupal</title>
+    <style>
+      /* Лаконичные стили для No-JS фоллбек отображения */
+      .nojs-wrapper { max-width: 600px; margin: 40px auto; padding: 25px; font-family: system-ui, sans-serif; border: 2px solid #ff4500; border-radius: 8px; background: #fff; }
+      .nojs-title { color: #333; margin-top: 0; border-bottom: 2px solid #ff4500; padding-bottom: 10px; }
+      .nojs-group { margin-bottom: 15px; }
+      .nojs-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; }
+      .nojs-input, .nojs-textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+      .nojs-error { color: #d32f2f; font-size: 13px; margin-top: 5px; font-weight: bold; }
+      .nojs-msg { padding: 15px; background: #e8f5e9; color: #2e7d32; border-radius: 4px; margin-bottom: 20px; font-weight: 500; }
+      .nojs-btn { padding: 12px 24px; background: #ff4500; color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+      .nojs-btn:hover { background: #e03e00; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <noscript>
+      <div class="nojs-wrapper">
+        <h2 class="nojs-title">Связаться с нами (No-JS Режим)</h2>
+        
+        <?php if (!empty($_SESSION['nojs_success'])): ?>
+          <div class="nojs-msg"><?= htmlspecialchars($_SESSION['nojs_success']); unset($_SESSION['nojs_success']); ?></div>
+        <?php endif; ?>
+
+        <?php if (!empty($_SESSION['nojs_credentials'])): ?>
+          <div class="nojs-msg" style="background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb;">
+            <strong>Успешная регистрация обращения!</strong><br>
+            Ваш логин: <code><?= htmlspecialchars($_SESSION['nojs_credentials']['login']); ?></code><br>
+            Ваш пароль: <code><?= htmlspecialchars($_SESSION['nojs_credentials']['password']); ?></code>
+            <?php unset($_SESSION['nojs_credentials']); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php 
+          $nojs_data = $_SESSION['form_data'] ?? [];
+          $nojs_errors = $_SESSION['form_errors'] ?? [];
+          unset($_SESSION['form_data'], $_SESSION['form_errors']);
+          $is_auth = !empty($_SESSION['user_login']);
+        ?>
+
+        <form action="index.php" method="POST">
+          <?php if ($is_auth): ?>
+            <input type="hidden" name="_method" value="PUT">
+            <div class="nojs-msg" style="background: #fff9c4; color: #f57f17;">
+              Вы редактируете данные профиля: <strong><?= htmlspecialchars($_SESSION['user_login']) ?></strong>
+            </div>
+          <?php endif; ?>
+
+          <div class="nojs-group">
+            <label>Имя *</label>
+            <input type="text" name="name" class="nojs-input" value="<?= htmlspecialchars($nojs_data['name'] ?? '') ?>">
+            <?php if(isset($nojs_errors['name'])): ?><div class="nojs-error"><?= $nojs_errors['name'] ?></div><?php endif; ?>
+          </div>
+
+          <div class="nojs-group">
+            <label>Email *</label>
+            <input type="email" name="email" class="nojs-input" value="<?= htmlspecialchars($nojs_data['email'] ?? '') ?>">
+            <?php if(isset($nojs_errors['email'])): ?><div class="nojs-error"><?= $nojs_errors['email'] ?></div><?php endif; ?>
+          </div>
+
+          <div class="nojs-group">
+            <label>Телефон</label>
+            <input type="tel" name="phone" class="nojs-input" value="<?= htmlspecialchars($nojs_data['phone'] ?? '') ?>">
+            <?php if(isset($nojs_errors['phone'])): ?><div class="nojs-error"><?= $nojs_errors['phone'] ?></div><?php endif; ?>
+          </div>
+
+          <div class="nojs-group">
+            <label>Компания</label>
+            <input type="text" name="company" class="nojs-input" value="<?= htmlspecialchars($nojs_data['company'] ?? '') ?>">
+          </div>
+
+          <div class="nojs-group">
+            <label>Сообщение *</label>
+            <textarea name="message" class="nojs-textarea" rows="5"><?= htmlspecialchars($nojs_data['message'] ?? '') ?></textarea>
+            <?php if(isset($nojs_errors['message'])): ?><div class="nojs-error"><?= $nojs_errors['message'] ?></div><?php endif; ?>
+          </div>
+
+          <button type="submit" class="nojs-btn">
+            <?= $is_auth ? 'Сохранить изменения (PUT)' : 'Отправить (POST)' ?>
+          </button>
+        </form>
+      </div>
+    </noscript>
   </body>
 </html>
